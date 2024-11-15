@@ -1,0 +1,379 @@
+#pragma once
+#include<iostream>
+#include<SFML/Graphics.hpp>
+#include<time.h>
+#include<string>
+#include<vector>
+#include"Game.h"
+
+using namespace sf;
+using namespace std;
+
+class grid
+{
+private:
+    string grid_level;
+    int showeasy_grid[10][10];
+    int showmedium_grid[17][17];
+    int showhard_grid[31][17];
+
+    int easy_grid[10][10];
+    int medium_grid[17][17];
+    int hard_grid[31][17];
+
+    int easy_mines = 10;
+    int medium_mines = 40;
+    int hard_mines = 99;
+
+public:
+    grid()
+    {
+        grid_level = "easy";
+    }
+
+    grid(string user_level)
+    {
+        grid_level = user_level;
+
+        if (grid_level == "easy" || grid_level == "Easy")
+        {
+            srand(time(0));
+            RenderWindow app(VideoMode(400, 400), "Minesweeper OOP");
+            int w = 32;
+            Texture t;
+            t.loadFromFile("images/tiles.jpg");
+            Sprite s(t);
+
+            for (int i = 1; i <= 9; i++) // Place Closed Boxes
+            {
+                for (int j = 1; j <= 9; j++)
+                {
+                    showeasy_grid[i][j] = 10;
+                }
+            }
+
+            for (int i = 1; i <= easy_mines; i++) // Place Mines
+            {
+                int x, y;
+                x = 1 + (rand() % 9);
+                y = 1 + (rand() % 9);
+                if (easy_grid[x][y] != 9)
+                {
+                    easy_grid[x][y] = 9;
+                }
+            }
+
+            for (int i = 1; i <= 9; i++) // Place 
+            {
+                for (int j = 1; j <= 9; j++)
+                {
+                    if (easy_grid[i][j] != 9)
+                        easy_grid[i][j] = 0;
+                }
+            }
+
+            for (int i = 1; i <= 9; i++)
+            {
+                for (int j = 1; j <= 9; j++)
+                {
+                    int n = 0;
+                    if (easy_grid[i][j] == 9)
+                        continue;
+                    if (easy_grid[i + 1][j] == 9)
+                        n++;
+                    if (easy_grid[i][j + 1] == 9)
+                        n++;
+                    if (easy_grid[i - 1][j] == 9)
+                        n++;
+                    if (easy_grid[i][j - 1] == 9)
+                        n++;
+
+                    if (easy_grid[i + 1][j + 1] == 9)
+                        n++;
+                    if (easy_grid[i - 1][j - 1] == 9)
+                        n++;
+                    if (easy_grid[i - 1][j + 1] == 9)
+                        n++;
+                    if (easy_grid[i + 1][j - 1] == 9)
+                        n++;
+
+                    easy_grid[i][j] = n;
+                }
+            }
+
+            while (app.isOpen())
+            {
+                Vector2i pos = Mouse::getPosition(app);
+                int x = pos.x / w;
+                int y = pos.y / w;
+
+                Event e;
+                while (app.pollEvent(e))
+                {
+                    if (e.type == Event::Closed)
+                        app.close();
+
+                    if (e.type == Event::MouseButtonPressed)
+                        if (e.key.code == Mouse::Left)
+                        {
+                            showeasy_grid[x][y] = easy_grid[x][y];
+                            if (easy_grid[x][y] == 0)
+                            {
+                                showeasy_grid[x - 1][y - 1] = easy_grid[x - 1][y - 1];
+                                showeasy_grid[x - 1][y] = easy_grid[x - 1][y];
+                                showeasy_grid[x - 1][y + 1] = easy_grid[x - 1][y + 1];
+                                showeasy_grid[x][y - 1] = easy_grid[x][y - 1];
+                                showeasy_grid[x][y + 1] = easy_grid[x][y + 1];
+                                showeasy_grid[x + 1][y - 1] = easy_grid[x + 1][y - 1];
+                                showeasy_grid[x + 1][y] = easy_grid[x + 1][y];
+                                showeasy_grid[x + 1][y + 1] = easy_grid[x + 1][y + 1];
+                            }
+                        }
+
+                        else if (e.key.code == Mouse::Right)
+                            showeasy_grid[x][y] = 11;
+                }
+
+                app.clear(Color::White);
+                for (int i = 1; i <= 9; i++)
+                    for (int j = 1; j <= 9; j++)
+                    {
+                        if (showeasy_grid[x][y] == 9)
+                            showeasy_grid[i][j] = easy_grid[i][j];
+
+                        s.setTextureRect(IntRect(showeasy_grid[i][j] * w, 0, w, w));
+                        s.setPosition(i * w, j * w);
+                        app.draw(s);
+                    }
+                app.display();
+            }
+        }
+
+        if (grid_level == "Medium" || grid_level == "medium")
+        {
+            srand(time(0));
+            RenderWindow app(VideoMode(600, 600), "Minesweeper OOP");
+            int w = 32;
+            Texture t;
+            t.loadFromFile("images/tiles.jpg");
+            Sprite s(t);
+
+            for (int i = 1; i <= 16; i++) // Place Closed Boxes
+            {
+                for (int j = 1; j <= 16; j++)
+                {
+                    showmedium_grid[i][j] = 10;
+                }
+            }
+
+            for (int i = 0; i <= medium_mines; i++) // Place Mines
+            {
+                int x, y;
+                x = 1 + (rand() % 16);
+                y = 1 + (rand() % 16);
+                if (medium_grid[x][y] != 9)
+                {
+                    medium_grid[x][y] = 9;
+                }
+            }
+
+            for (int i = 1; i <= 16; i++) // Place 
+            {
+                for (int j = 1; j <= 16; j++)
+                {
+                    if (medium_grid[i][j] != 9)
+                        medium_grid[i][j] = 0;
+                }
+            }
+
+            for (int i = 1; i <= 16; i++)
+            {
+                for (int j = 1; j <= 16; j++)
+                {
+                    int n = 0;
+                    if (medium_grid[i][j] == 9)
+                        continue;
+                    if (medium_grid[i + 1][j] == 9)
+                        n++;
+                    if (medium_grid[i][j + 1] == 9)
+                        n++;
+                    if (medium_grid[i - 1][j] == 9)
+                        n++;
+                    if (medium_grid[i][j - 1] == 9)
+                        n++;
+
+                    if (medium_grid[i + 1][j + 1] == 9)
+                        n++;
+                    if (medium_grid[i - 1][j - 1] == 9)
+                        n++;
+                    if (medium_grid[i - 1][j + 1] == 9)
+                        n++;
+                    if (medium_grid[i + 1][j - 1] == 9)
+                        n++;
+
+                    medium_grid[i][j] = n;
+                }
+            }
+
+            while (app.isOpen())
+            {
+                Vector2i pos = Mouse::getPosition(app);
+                int x = pos.x / w;
+                int y = pos.y / w;
+
+                Event e;
+                while (app.pollEvent(e))
+                {
+                    if (e.type == Event::Closed)
+                        app.close();
+
+                    if (e.type == Event::MouseButtonPressed)
+                        if (e.key.code == Mouse::Left)
+                        {
+                            showmedium_grid[x][y] = medium_grid[x][y];
+                            if (medium_grid[x][y] == 0)
+                            {
+                                showmedium_grid[x - 1][y - 1] = medium_grid[x - 1][y - 1];
+                                showmedium_grid[x - 1][y] = medium_grid[x - 1][y];
+                                showmedium_grid[x - 1][y + 1] = medium_grid[x - 1][y + 1];
+                                showmedium_grid[x][y - 1] = medium_grid[x][y - 1];
+                                showmedium_grid[x][y + 1] = medium_grid[x][y + 1];
+                                showmedium_grid[x + 1][y - 1] = medium_grid[x + 1][y - 1];
+                                showmedium_grid[x + 1][y] = medium_grid[x + 1][y];
+                                showmedium_grid[x + 1][y + 1] = medium_grid[x + 1][y + 1];
+                            }
+                        }
+
+
+                        else if (e.key.code == Mouse::Right)
+                            showmedium_grid[x][y] = 11;
+                }
+
+                app.clear(Color::White);
+                for (int i = 1; i <= 16; i++)
+                    for (int j = 1; j <= 16; j++)
+                    {
+                        if (showmedium_grid[x][y] == 9)
+                            showmedium_grid[i][j] = medium_grid[i][j];
+
+                        s.setTextureRect(IntRect(showmedium_grid[i][j] * w, 0, w, w));
+                        s.setPosition(i * w, j * w);
+                        app.draw(s);
+                    }
+                app.display();
+            }
+        }
+
+        if (grid_level == "hard" || grid_level == "Hard")
+        {
+            srand(time(0));
+            RenderWindow app(VideoMode(1200, 800), "Minesweeper OOP");
+            int w = 32;
+            Texture t;
+            t.loadFromFile("images/tiles.jpg");
+            Sprite s(t);
+
+            for (int i = 1; i <= 30; i++) // Place Closed Boxes
+            {
+                for (int j = 1; j <= 16; j++)
+                {
+                    showhard_grid[i][j] = 10;
+                }
+            }
+
+            for (int i = 1; i <= hard_mines; i++) // Place Mines
+            {
+                int x, y;
+                x = 1 + (rand() % 30);
+                y = 1 + (rand() % 16);
+                if (hard_grid[x][y] != 9)
+                {
+                    hard_grid[x][y] = 9;
+                }
+            }
+
+            for (int i = 1; i <= 30; i++) // Place 
+            {
+                for (int j = 1; j <= 16; j++)
+                {
+                    if (hard_grid[i][j] != 9)
+                        hard_grid[i][j] = 0;
+                }
+            }
+
+            for (int i = 1; i <= 30; i++)
+            {
+                for (int j = 1; j <= 16; j++)
+                {
+                    int n = 0;
+                    if (hard_grid[i][j] == 9)
+                        continue;
+                    if (hard_grid[i + 1][j] == 9)
+                        n++;
+                    if (hard_grid[i][j + 1] == 9)
+                        n++;
+                    if (hard_grid[i - 1][j] == 9)
+                        n++;
+                    if (hard_grid[i][j - 1] == 9)
+                        n++;
+
+                    if (hard_grid[i + 1][j + 1] == 9)
+                        n++;
+                    if (hard_grid[i - 1][j - 1] == 9)
+                        n++;
+                    if (hard_grid[i - 1][j + 1] == 9)
+                        n++;
+                    if (hard_grid[i + 1][j - 1] == 9)
+                        n++;
+
+                    hard_grid[i][j] = n;
+                }
+            }
+
+            while (app.isOpen())
+            {
+                Vector2i pos = Mouse::getPosition(app);
+                int x = pos.x / w;
+                int y = pos.y / w;
+
+                Event e;
+                while (app.pollEvent(e))
+                {
+                    if (e.type == Event::Closed)
+                        app.close();
+
+                    if (e.type == Event::MouseButtonPressed)
+                        if (e.key.code == Mouse::Left) {
+                            showhard_grid[x][y] = hard_grid[x][y];
+                            if (hard_grid[x][y] == 0)
+                            {
+                                showhard_grid[x - 1][y - 1] = hard_grid[x - 1][y - 1];
+                                showhard_grid[x - 1][y] = hard_grid[x - 1][y];
+                                showhard_grid[x - 1][y + 1] = hard_grid[x - 1][y + 1];
+                                showhard_grid[x][y - 1] = hard_grid[x][y - 1];
+                                showhard_grid[x][y + 1] = hard_grid[x][y + 1];
+                                showhard_grid[x + 1][y - 1] = hard_grid[x + 1][y - 1];
+                                showhard_grid[x + 1][y] = hard_grid[x + 1][y];
+                                showhard_grid[x + 1][y + 1] = hard_grid[x + 1][y + 1];
+                            }
+                        }
+                        else if (e.key.code == Mouse::Right)
+                            showhard_grid[x][y] = 11;
+                }
+
+                app.clear(Color::White);
+                for (int i = 1; i <= 30; i++)
+                    for (int j = 1; j <= 16; j++)
+                    {
+                        if (showhard_grid[x][y] == 9)
+                            showhard_grid[i][j] = hard_grid[i][j];
+
+                        s.setTextureRect(IntRect(showhard_grid[i][j] * w, 0, w, w));
+                        s.setPosition(i * w, j * w);
+                        app.draw(s);
+                    }
+                app.display();
+            }
+        }
+    }
+};
